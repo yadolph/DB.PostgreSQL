@@ -74,14 +74,10 @@ def get_student(student_id):
 def get_students(course_id):
     with pg.connect(database='netology', user='netology', password='netology', host='localhost', port=5432) as conn:
         cur = conn.cursor()
-        cur.execute('SELECT * FROM student_course WHERE course_id = %s;', (course_id,))
-        student_ids = cur.fetchall()
-        student_list = []
-        for student_id in student_ids:
-            cur.execute('SELECT * FROM student WHERE id = %s;', (student_id[0],))
-            student = cur.fetchall()
-            student_list.append(student)
-        return student_list
+        cur.execute('''SELECT * FROM student_course LEFT JOIN student on student_course.student_id = student.id 
+        WHERE course_id = %s;''', (course_id,))
+        students = cur.fetchall()
+        return students
 
 
 if __name__ == '__main__':
